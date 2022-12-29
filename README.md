@@ -15,11 +15,11 @@ go get github.com/nigelpage/instrument
 ```go
 import {
     "fmt"
-    "github.com/nigelpage/instrument"
+    ins "github.com/nigelpage/instrument"
 }
 
 # returns 'StructuredError'
-var e = NewStructuredError(Level.INFORMATION(), c, "new file created")
+var e = ins.NewStructuredError(ins.Level.INFORMATION(), c, "new file created")
 
 if e != nil {
     fmt.Println(e)
