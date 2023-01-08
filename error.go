@@ -72,6 +72,12 @@ func (se *StructuredError) Error() string {
 		l, se.Code, se.When.Format(time.RFC1123), se.description, v)
 }
 
+func (se *StructuredError) Unwrap() []StructuredError {
+	var sea []StructuredError
+
+	return sea
+}
+
 // IsErrorCode() checks the error code against a provided one
 func (e *StructuredError) IsErrorCode(code string) bool {
 	return e.Code == code
