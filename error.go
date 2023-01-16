@@ -72,8 +72,11 @@ func (se *StructuredError) Error() string {
 		l, se.Code, se.When.Format(time.RFC1123), se.description, v)
 }
 
-func (se *StructuredError) Unwrap() []StructuredError {
-	var sea []StructuredError
+/*
+Needs to be changed when Go 1.20 is released as signature changes to Unwrap() []error
+*/
+func (se *StructuredError) Unwrap() error {
+	var sea error
 
 	return sea
 }
