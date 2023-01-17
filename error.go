@@ -22,7 +22,7 @@ const (
 
 type StructuredError struct {
 	level       ErrorLevel    // error level
-	Code        string        // error code
+	Code        string     // error code
 	description string        // error description
 	When        time.Time     // time error occured
 	Values      []interface{} // any additional information
@@ -31,7 +31,7 @@ type StructuredError struct {
 func NewStructuredError(level ErrorLevel, code, descr string) *StructuredError {
 	return &StructuredError{
 		level:       level,
-		Code:        code,
+		Code:        strings.ToUpper(code),
 		description: descr,
 		When:        time.Now(),
 	}
@@ -82,5 +82,5 @@ func (se *StructuredError) Unwrap() error {
 
 // IsErrorCode() checks the error code against a provided one
 func (e *StructuredError) IsErrorCode(code string) bool {
-	return e.Code == code
+	return e.Code == strings.ToUpper(code)
 }

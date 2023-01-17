@@ -19,7 +19,7 @@ import {
 }
 
 # returns 'StructuredError'
-var e = ins.NewStructuredError(ins.Level.INFORMATION(), c, "new file created")
+var e = ins.NewStructuredError(Information, c, "new file created")
 
 if e != nil {
     fmt.Println(e)
