@@ -11,9 +11,9 @@ import (
 )
 
 func TestNewStructuredError(t *testing.T) {
-	var l = Level.INFORMATION()
+	var l = Information
 	var c = "FILECREATED"
-	var e = NewStructuredError(Level.INFORMATION(), c, "new file created")
+	var e = NewStructuredError(Information, c, "new file created")
 
 	if e.level != l {
 		t.Errorf("NewStructredError did not return expected error level")

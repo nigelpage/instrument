@@ -13,13 +13,12 @@ import (
 
 type ErrorLevel int16
 
-var Level = ErrorLevel(0).NONE()
-
-func (ErrorLevel) NONE() ErrorLevel        { return ErrorLevel(0) }
-func (ErrorLevel) INFORMATION() ErrorLevel { return ErrorLevel(1) }
-func (ErrorLevel) WARNING() ErrorLevel     { return ErrorLevel(2) }
-func (ErrorLevel) ERROR() ErrorLevel       { return ErrorLevel(3) }
-func (ErrorLevel) FATAL() ErrorLevel       { return ErrorLevel(4) }
+const (
+	Information ErrorLevel = iota
+	Warning
+	Error
+	Fatal
+)
 
 type StructuredError struct {
 	level       ErrorLevel    // error level
@@ -42,13 +41,13 @@ func NewStructuredError(level ErrorLevel, code, descr string) *StructuredError {
 func (se *StructuredError) Error() string {
 	var l string // error level
 	switch se.level {
-	case Level.INFORMATION():
+	case Information:
 		l = "INFORMATION"
-	case Level.WARNING():
+	case Warning:
 		l = "WARNING"
-	case Level.ERROR():
+	case Error:
 		l = "ERROR"
-	case Level.FATAL():
+	case Fatal:
 		l = "FATAL"
 	}
 
