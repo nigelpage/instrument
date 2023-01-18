@@ -11,7 +11,7 @@ import (
 	"testing"
 )
 
-func StructuredErrorIsErrorCode(t* testing.T) {
+func TestStructuredErrorIsErrorCode(t *testing.T) {
 	var c = "filecreated"
 	var e = NewStructuredError(Information, c, "new file created")
 
