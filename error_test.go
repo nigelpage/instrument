@@ -23,7 +23,6 @@ func TestNewStructuredError(t *testing.T) {
 		t.Errorf("NewStructuredError did not return expected error code")
 	}
 
-	//fmt.Println(e)
 }
 
 func TestStructuredErrorIsErrorCode(t *testing.T) {
