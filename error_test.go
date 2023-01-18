@@ -6,19 +6,9 @@
 package instrument
 
 import (
-	"fmt"
 	"strings"
 	"testing"
 )
-
-func TestStructuredErrorIsErrorCode(t *testing.T) {
-	var c = "filecreated"
-	var e = NewStructuredError(Information, c, "new file created")
-
-	if e.Code != strings.ToUpper(c) {
-		t.Errorf("StructuredError.IsErrorCode did not enforce uppercase error code")
-	}
-}
 
 func TestNewStructuredError(t *testing.T) {
 	var l ErrorLevel = Information
@@ -33,5 +23,14 @@ func TestNewStructuredError(t *testing.T) {
 		t.Errorf("NewStructuredError did not return expected error code")
 	}
 
-	fmt.Println(e)
+	//fmt.Println(e)
+}
+
+func TestStructuredErrorIsErrorCode(t *testing.T) {
+	var c = "filecreated"
+	var e = NewStructuredError(Information, c, "new file created")
+
+	if e.Code != strings.ToUpper(c) {
+		t.Errorf("StructuredError.IsErrorCode did not enforce uppercase error code")
+	}
 }
