@@ -22,18 +22,19 @@ const (
 
 type StructuredError struct {
 	level       ErrorLevel    // error level
-	Code        string     // error code
+	Code        string        // error code
 	description string        // error description
 	When        time.Time     // time error occured
 	Values      []interface{} // any additional information
 }
 
-func NewStructuredError(level ErrorLevel, code, descr string) *StructuredError {
+func NewStructuredError(level ErrorLevel, code, descr string, values []interface{}) *StructuredError {
 	return &StructuredError{
 		level:       level,
 		Code:        strings.ToUpper(code),
 		description: descr,
 		When:        time.Now(),
+		Values:      values,
 	}
 }
 
@@ -67,8 +68,9 @@ func (se *StructuredError) Error() string {
 		v = sb.String()
 	}
 
-	return fmt.Sprintf("%s: %s at %s, %s%v",
-		l, se.Code, se.When.Format(time.RFC1123), se.description, v)
+	fs := "%s: %s at %s, " + se.description + "%v"
+
+	return fmt.Sprintf(fs, l, se.Code, se.When.Format(time.RFC1123), v)
 }
 
 /*

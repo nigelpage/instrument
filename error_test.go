@@ -10,10 +10,16 @@ import (
 	"testing"
 )
 
+var l ErrorLevel = Information
+var c = "filecreated"
+var d = "new file created"
+var v = []interface{}{
+	"Readme.md",
+	42,
+}
+
 func TestNewStructuredError(t *testing.T) {
-	var l ErrorLevel = Information
-	var c = "filecreated"
-	var e = NewStructuredError(Information, c, "new file created")
+	var e = NewStructuredError(l, c, d, v)
 
 	if e.level != l {
 		t.Errorf("NewStructredError did not return expected error level")
@@ -26,8 +32,7 @@ func TestNewStructuredError(t *testing.T) {
 }
 
 func TestStructuredErrorIsErrorCode(t *testing.T) {
-	var c = "filecreated"
-	var e = NewStructuredError(Information, c, "new file created")
+	var e = NewStructuredError(l, c, d, v)
 
 	if e.Code != strings.ToUpper(c) {
 		t.Errorf("StructuredError.IsErrorCode did not enforce uppercase error code")
