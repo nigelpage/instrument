@@ -13,7 +13,7 @@ import (
 var l ErrorLevel = Information
 var c = "filecreated"
 var d = "new file created"
-var v = []interface{} {
+var v = []interface{}{
 	"Readme.md",
 	42,
 }
