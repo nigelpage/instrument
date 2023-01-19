@@ -59,16 +59,16 @@ func (se *StructuredError) Error() string {
 		f := true
 		t := "%v"
 		for _, s := range se.Values {
+			sb.WriteString(fmt.Sprintf(t, s))
 			if f {
 				f = false
 				t = ", %v"
-			}
-			sb.WriteString(fmt.Sprintf(t, s))
+			}			
 		}
 		v = sb.String()
 	}
 
-	fs := "%s: %s at %s, " + se.description + "%v"
+	fs := "%s: %s at %s, " + se.description + "%s"
 
 	return fmt.Sprintf(fs, l, se.Code, se.When.Format(time.RFC1123), v)
 }

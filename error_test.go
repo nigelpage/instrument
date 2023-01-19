@@ -38,3 +38,11 @@ func TestStructuredErrorIsErrorCode(t *testing.T) {
 		t.Errorf("StructuredError.IsErrorCode did not enforce uppercase error code")
 	}
 }
+
+func TestError(t *testing.T) {
+	var e = NewStructuredError(l, c, d, v)
+	var m = e.Error()
+	if m == "" {
+		t.Errorf("StructuredError.Error() did not return a formatted string")
+	}
+}
