@@ -88,12 +88,12 @@ func (e *StructuredError) IsErrorCode(code string) bool {
 	return e.Code == strings.ToUpper(code)
 }
 
-func (e *StructuredError) Serialize() (string, error) {
+func (e *StructuredError) ToJson() (string, error) {
 	b, err := json.Marshal(e)
 	return string(b[:]), err // [:] converts from array to slice without copying!
 }
 
-func Deserialize(s string) (*StructuredError, error) {
+func FromJson(s string) (*StructuredError, error) {
 	var se StructuredError
 	err := json.Unmarshal([]byte(s), &se)
 	return &se, err

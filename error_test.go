@@ -49,17 +49,17 @@ func TestError(t *testing.T) {
 
 func TestJson(t *testing.T) {
 	se := NewStructuredError(l, c, d, v)
-	j, e := se.Serialize()
+	j, e := se.ToJson()
 	if e != nil {
-		t.Errorf("StructuredErrorSerialize failed to dehydrate StructuredError to Json")
+		t.Errorf("StructuredErrorToJson failed to serialize StructuredError to Json")
 	}
 
-	sed, e := Deserialize(j)
+	sed, e := FromJson(j)
 	if e != nil {
-		t.Errorf("StructuredErrorDesrialize failed to rehydrate StructuredError from Json")
+		t.Errorf("StructuredErrorFromJson failed to deserialize StructuredError from Json")
 	}
 
-	if sed != se {
-		t.Errorf("StructuredErrorDesrialize failed to rehydrate StructuredError correctly")
+	if sed.Level != se.Level || sed.Code != se.Code || sed.Description != se.Description || !sed.When.Equal(se.When) {
+		t.Errorf("StructuredErrorFromJson failed to deserialize StructuredError correctly")
 	}
 }
