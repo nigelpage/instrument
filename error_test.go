@@ -10,7 +10,7 @@ import (
 	"testing"
 )
 
-var l ErrorLevel = Information
+var l ErrorLevel = Warning
 var c = "filecreated"
 var d = "new file created"
 var v = []interface{}{
@@ -21,7 +21,7 @@ var v = []interface{}{
 func TestNewStructuredError(t *testing.T) {
 	var e = NewStructuredError(l, c, d, v)
 
-	if e.level != l {
+	if e.Level != l {
 		t.Errorf("NewStructredError did not return expected error level")
 	}
 
@@ -44,5 +44,22 @@ func TestError(t *testing.T) {
 	var m = e.Error()
 	if m == "" {
 		t.Errorf("StructuredError.Error() did not return a formatted string")
+	}
+}
+
+func TestJson(t *testing.T) {
+	se := NewStructuredError(l, c, d, v)
+	j, e := se.Serialize()
+	if e != nil {
+		t.Errorf("StructuredErrorSerialize failed to dehydrate StructuredError to Json")
+	}
+
+	sed, e := Deserialize(j)
+	if e != nil {
+		t.Errorf("StructuredErrorDesrialize failed to rehydrate StructuredError from Json")
+	}
+
+	if sed != se {
+		t.Errorf("StructuredErrorDesrialize failed to rehydrate StructuredError correctly")
 	}
 }

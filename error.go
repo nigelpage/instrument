@@ -6,6 +6,7 @@
 package instrument
 
 import (
+	"encoding/json"
 	"fmt"
 	"strings"
 	"time"
@@ -21,18 +22,18 @@ const (
 )
 
 type StructuredError struct {
-	level       ErrorLevel    // error level
+	Level       ErrorLevel    // error level
 	Code        string        // error code
-	description string        // error description
+	Description string        // error description
 	When        time.Time     // time error occured
 	Values      []interface{} // any additional information
 }
 
 func NewStructuredError(level ErrorLevel, code, descr string, values []interface{}) *StructuredError {
 	return &StructuredError{
-		level:       level,
+		Level:       level,
 		Code:        strings.ToUpper(code),
-		description: descr,
+		Description: descr,
 		When:        time.Now(),
 		Values:      values,
 	}
@@ -41,7 +42,7 @@ func NewStructuredError(level ErrorLevel, code, descr string, values []interface
 // Error() supports the standard error interface
 func (se *StructuredError) Error() string {
 	var l string // error level
-	switch se.level {
+	switch se.Level {
 	case Information:
 		l = "INFORMATION"
 	case Warning:
@@ -63,12 +64,12 @@ func (se *StructuredError) Error() string {
 			if f {
 				f = false
 				t = ", %v"
-			}			
+			}
 		}
 		v = sb.String()
 	}
 
-	fs := "%s: %s at %s, " + se.description + "%s"
+	fs := "%s: %s at %s, " + se.Description + "%s"
 
 	return fmt.Sprintf(fs, l, se.Code, se.When.Format(time.RFC1123), v)
 }
@@ -85,4 +86,15 @@ func (se *StructuredError) Unwrap() error {
 // IsErrorCode() checks the error code against a provided one
 func (e *StructuredError) IsErrorCode(code string) bool {
 	return e.Code == strings.ToUpper(code)
+}
+
+func (e *StructuredError) Serialize() (string, error) {
+	b, err := json.Marshal(e)
+	return string(b[:]), err // [:] converts from array to slice without copying!
+}
+
+func Deserialize(s string) (*StructuredError, error) {
+	var se StructuredError
+	err := json.Unmarshal([]byte(s), &se)
+	return &se, err
 }
