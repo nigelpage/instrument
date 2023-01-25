@@ -12,26 +12,33 @@ import (
 	"time"
 )
 
-type ErrorLevel int16
+/*
+* The format of StructuredError is based on the OpenTelemetry log data-model
+* https://opentelemetry.io/docs/reference/specification/logs/data-model/
+*/
+
+type Severity int16
 
 const (
-	Information ErrorLevel = iota
-	Warning
-	Error
-	Fatal
+	TRACE = 1
+	DEBUG = 5
+	INFO = 9
+	WARN = 13
+	ERROR = 17
+	FATAL = 21
 )
 
 type StructuredError struct {
-	Level       ErrorLevel    // error level
+	Severity       Severity      // error severity
 	Code        string        // error code
 	Description string        // error description
 	When        time.Time     // time error occured
 	Values      []interface{} // any additional information
 }
 
-func NewStructuredError(level ErrorLevel, code, descr string, values []interface{}) *StructuredError {
+func NewStructuredError(severity Severity, code, descr string, values []interface{}) *StructuredError {
 	return &StructuredError{
-		Level:       level,
+		Severity:       severity,
 		Code:        strings.ToUpper(code),
 		Description: descr,
 		When:        time.Now(),
@@ -41,16 +48,20 @@ func NewStructuredError(level ErrorLevel, code, descr string, values []interface
 
 // Error() supports the standard error interface
 func (se *StructuredError) Error() string {
-	var l string // error level
-	switch se.Level {
-	case Information:
-		l = "INFORMATION"
-	case Warning:
-		l = "WARNING"
-	case Error:
-		l = "ERROR"
-	case Fatal:
-		l = "FATAL"
+	var sev string // error severity
+	switch se.Severity {
+	case TRACE:
+		sev = "TRACE"
+	case DEBUG:
+		sev = "DEBUG"
+	case INFO:
+		sev = "INFO"
+	case WARN:
+		sev = "WARN"
+	case ERROR:
+		sev = "ERROR"
+	case FATAL:
+		sev = "FATAL"
 	}
 
 	var v string = "" // error values
@@ -71,7 +82,7 @@ func (se *StructuredError) Error() string {
 
 	fs := "%s: %s at %s, " + se.Description + "%s"
 
-	return fmt.Sprintf(fs, l, se.Code, se.When.Format(time.RFC1123), v)
+	return fmt.Sprintf(fs, sev, se.Code, se.When.Format(time.RFC1123), v)
 }
 
 /*
