@@ -31,16 +31,16 @@ const (
 type StructuredError struct {
 	Severity    Severity               // error severity
 	Code        string                 // error code
-	Description string                 // error description
+	Message     string                 // error message
 	When        int64                  // time error occured (nanoseconds since Unix epoch - OpenTelemetry)
 	Attributes  map[string]interface{} // any additional information
 }
 
-func NewStructuredError(severity Severity, code, descr string, attributes map[string]interface{}) *StructuredError {
+func NewStructuredError(severity Severity, code, msg string, attributes map[string]interface{}) *StructuredError {
 	return &StructuredError{
 		Severity:    severity,
 		Code:        strings.ToUpper(code),
-		Description: descr,
+		Message: 	 msg,
 		When:        time.Now().Unix(),
 		Attributes:  attributes,
 	}
@@ -64,7 +64,7 @@ func (se *StructuredError) Error() string {
 		v = sb.String()
 	}
 
-	fs := "%s: %s at %s, " + se.Description + "%s"
+	fs := "%s: %s at %s, " + se.Message + "%s"
 
 	return fmt.Sprintf(fs, se.severityText(), se.Code, time.Unix(se.When, 0), v)
 }
