@@ -19,7 +19,10 @@ var a = map[string]interface{}{
 }
 
 func TestNewStructuredError(t *testing.T) {
-	var e = NewStructuredError(s, c, m, a)
+	e, err := NewStructuredError(s, c, m, a)
+	if err != nil {
+		t.Errorf("NewStructuredError did not validate severity correctly")
+	}
 
 	if e.Severity != s {
 		t.Errorf("NewStructredError did not return expected error severity")
@@ -32,7 +35,7 @@ func TestNewStructuredError(t *testing.T) {
 }
 
 func TestStructuredErrorIsErrorCode(t *testing.T) {
-	var e = NewStructuredError(s, c, m, a)
+	e, _ := NewStructuredError(s, c, m, a)
 
 	if e.Code != strings.ToUpper(c) {
 		t.Errorf("StructuredError.IsErrorCode did not enforce uppercase error code")
@@ -40,7 +43,7 @@ func TestStructuredErrorIsErrorCode(t *testing.T) {
 }
 
 func TestError(t *testing.T) {
-	var e = NewStructuredError(s, c, m, a)
+	e, _ := NewStructuredError(s, c, m, a)
 	var m = e.Error()
 	if m == "" {
 		t.Errorf("StructuredError.Error() did not return a formatted string")
@@ -48,7 +51,7 @@ func TestError(t *testing.T) {
 }
 
 func TestJson(t *testing.T) {
-	se := NewStructuredError(s, c, m, a)
+	se, _ := NewStructuredError(s, c, m, a)
 	j, e := se.ToJson()
 	if e != nil {
 		t.Errorf("StructuredErrorToJson failed to serialize StructuredError to Json")

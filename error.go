@@ -6,6 +6,7 @@
 package instrument
 
 import (
+	"errors"
 	"encoding/json"
 	"fmt"
 	"strings"
@@ -55,14 +56,17 @@ type StructuredError struct {
 	Attributes map[string]interface{} // any additional information
 }
 
-func NewStructuredError(severity Severity, code, msg string, attributes map[string]interface{}) *StructuredError {
+func NewStructuredError(severity Severity, code, msg string, attributes map[string]interface{}) (*StructuredError, error) {
+	if severity < TRACE || severity > FATAL4 {
+		return nil, errors.New("invalid severity")
+	}
 	return &StructuredError{
 		Severity:   severity,
 		Code:       strings.ToUpper(code),
 		Message:    msg,
 		When:       time.Now().Unix(),
 		Attributes: attributes,
-	}
+	}, nil
 }
 
 // Error() supports the standard error interface
