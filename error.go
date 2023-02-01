@@ -54,9 +54,10 @@ type StructuredError struct {
 	Message    string                 // error message
 	When       int64                  // time error occured (nanoseconds since Unix epoch - OpenTelemetry)
 	Attributes map[string]interface{} // any additional information
+	wrapped	   error				  // wrapped error
 }
 
-func NewStructuredError(severity Severity, code, msg string, attributes map[string]interface{}) (*StructuredError, error) {
+func NewStructuredError(severity Severity, code, msg string, attributes map[string]interface{}, we error) (*StructuredError, error) {
 	if severity < TRACE || severity > FATAL4 {
 		return nil, errors.New("invalid severity")
 	}
@@ -66,7 +67,9 @@ func NewStructuredError(severity Severity, code, msg string, attributes map[stri
 		Message:    msg,
 		When:       time.Now().Unix(),
 		Attributes: attributes,
+		wrapped:    we,
 	}, nil
+	
 }
 
 // Error() supports the standard error interface
@@ -88,6 +91,10 @@ func (se *StructuredError) Error() string {
 	}
 
 	fs := "%s: %s at %s, " + se.Message + "%s"
+	if se.wrapped!= nil {
+		fs = fs + "%n  "
+		// TODO: deal with repeat unwrapping and formatting
+	}
 
 	return fmt.Sprintf(fs, se.severityText(), se.Code, time.Unix(se.When, 0), v)
 }
@@ -154,9 +161,7 @@ func (se *StructuredError) severityText() string {
 Needs to be changed when Go 1.20 is released as signature changes to Unwrap() []error
 */
 func (se *StructuredError) Unwrap() error {
-	var sea error
-
-	return sea
+	return se.wrapped
 }
 
 // IsErrorCode() checks the error code against a provided one
