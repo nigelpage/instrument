@@ -157,9 +157,6 @@ func (se *StructuredError) severityText() string {
 	return sev
 }
 
-/*
-Needs to be changed when Go 1.20 is released as signature changes to Unwrap() []error
-*/
 func (se *StructuredError) Unwrap() error {
 	return se.wrapped
 }
