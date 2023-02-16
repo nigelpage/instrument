@@ -18,35 +18,92 @@ import (
 * https://opentelemetry.io/docs/reference/specification/logs/data-model/
  */
 
-type Severity int16
+type Severity uint16
 
 const (
-	NOTSPECIFIED Severity = iota
-	TRACE
-	TRACE2
-	TRACE3
-	TRACE4
-	DEBUG
-	DEBUG2
-	DEBUG3
-	DEBUG4
-	INFO
-	INFO2
-	INFO3
-	INFO4
-	WARN
-	WARN2
-	WARN3
-	WARN4
-	ERROR
-	ERROR2
-	ERROR3
-	ERROR4
-	FATAL
-	FATAL2
-	FATAL3
-	FATAL4
+	Trace = 1
+	Trace2 = 2
+	Trace3 = 3
+	Trace4 = 4
+	Debug = 5
+	Debug2 = 6
+	Debug3 = 7
+	Debug4 = 8
+	Info = 9
+	Info2 = 10
+	Info3 = 11
+	Info4 = 12
+	Warn = 13
+	Warn2 = 14
+	Warn3 = 15
+	Warn4 = 16
+	Error = 17
+	Error2 = 18
+	Error3 = 19
+	Error4 = 20
+	Fatal = 21
+	Fatal2 = 22
+	Fatal3 = 23
+	Fatal4 = 24
 )
+
+var severityToStr = map[Severity]string{
+	Trace: "Trace",
+	Trace2: "Trace2",
+	Trace3: "Trace3",
+	Trace4: "Trace4",
+	Debug: "Debug",
+	Debug2: "Debug2",
+	Debug3: "Debug3",
+	Debug4: "Debug4",
+	Info: "Info",
+	Info2: "Info2",
+	Info3: "Info3",
+	Info4: "Info4",
+	Warn: "Warn",
+	Warn2: "Warn2",
+	Warn3: "Warn3",
+	Warn4: "Warn4",
+	Error: "Error",
+	Error2: "Error2",
+	Error3: "Error3",
+	Error4: "Error4",
+	Fatal: "Fatal",
+	Fatal2: "Fatal2",
+	Fatal3: "Fatal3",
+	Fatal4: "Fatal4",
+}
+
+var strToSeverity = map[string]Severity{
+	`"Trace"`: Trace,
+	`"Trace2"`: Trace2,
+	`"Trace3"`: Trace3,
+	`"Trace4"`: Trace4,
+	`"Debug"`: Debug,
+	`"Debug2"`: Debug2,
+	`"Debug3"`: Debug3,
+	`"Debug4"`: Debug4,
+	`"Info"`: Info,
+	`"Info2"`: Info2,
+	`"Info3"`: Info3,
+	`"Info4"`: Info4,
+	`"Warn"`: Warn,
+	`"Warn2"`: Warn2,
+	`"Warn3"`: Warn3,
+	`"Warn4"`: Warn4,
+	`"Error"`: Error,
+	`"Error2"`: Error2,
+	`"Error3"`: Error3,
+	`"Error4"`: Error4,
+	`"Fatal"`: Fatal,
+	`"Fatal2"`: Fatal2,
+	`"Fatal3"`: Fatal3,
+	`"Fatal4"`: Fatal4,
+}
+
+func (s Severity) String() string {
+	return severityToStr[s]
+}
 
 type StructuredError struct {
 	Severity   Severity               // error severity
@@ -58,7 +115,7 @@ type StructuredError struct {
 }
 
 func NewStructuredError(severity Severity, code, msg string, attributes map[string]interface{}, we error) (*StructuredError, error) {
-	if severity < TRACE || severity > FATAL4 {
+	if severity < Trace || severity > Fatal4 {
 		return nil, errors.New("invalid severity")
 	}
 	return &StructuredError{
@@ -96,66 +153,9 @@ func (se *StructuredError) Error() string {
 		// TODO: deal with repeat unwrapping and formatting
 	}
 
-	return fmt.Sprintf(fs, se.severityText(), se.Code, time.Unix(se.When, 0), v)
+	return fmt.Sprintf(fs, se.Severity.String(), se.Code, time.Unix(se.When, 0), v)
 }
 
-func (se *StructuredError) severityText() string {
-	var sev string // error severity
-	switch se.Severity {
-	case NOTSPECIFIED:
-		sev = "NOTSPECIFIED"
-	case TRACE:
-		sev = "TRACE"
-	case TRACE2:
-		sev = "TRACE2"
-	case TRACE3:
-		sev = "TRACE3"
-	case TRACE4:
-		sev = "TRACE4"
-	case DEBUG:
-		sev = "DEBUG"
-	case DEBUG2:
-		sev = "DEBUG2"
-	case DEBUG3:
-		sev = "DEBUG3"
-	case DEBUG4:
-		sev = "DEBUG4"
-	case INFO:
-		sev = "INFO"
-	case INFO2:
-		sev = "INFO2"
-	case INFO3:
-		sev = "INFO3"
-	case INFO4:
-		sev = "INFO4"
-	case WARN:
-		sev = "WARN"
-	case WARN2:
-		sev = "WARN2"
-	case WARN3:
-		sev = "WARN3"
-	case WARN4:
-		sev = "WARN4"
-	case ERROR:
-		sev = "ERROR"
-	case ERROR2:
-		sev = "ERROR2"
-	case ERROR3:
-		sev = "ERROR3"
-	case ERROR4:
-		sev = "ERROR4"
-	case FATAL:
-		sev = "FATAL"
-	case FATAL2:
-		sev = "FATAL2"
-	case FATAL3:
-		sev = "FATAL3"
-	case FATAL4:
-		sev = "FATAL4"
-	}
-
-	return sev
-}
 
 func (se *StructuredError) Unwrap() error {
 	return se.wrapped

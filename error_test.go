@@ -10,7 +10,7 @@ import (
 	"testing"
 )
 
-var s Severity = INFO
+var s Severity = Info
 var c = "filecreated"
 var m = "new file created"
 var a = map[string]interface{}{
