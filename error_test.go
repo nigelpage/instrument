@@ -25,7 +25,7 @@ func TestNewStructuredError(t *testing.T) {
 	}
 
 	if e.Severity != s {
-		t.Errorf("NewStructredError did not return expected error severity")
+		t.Errorf("NewStructuredError did not return expected error severity")
 	}
 
 	if !e.IsErrorCode(c) {
