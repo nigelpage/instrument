@@ -7,7 +7,7 @@ package instrument
 
 import (
 	"errors"
-	"encoding/json"
+	//"encoding/json"
 	"fmt"
 	"strings"
 	"time"
@@ -114,7 +114,7 @@ type StructuredError struct {
 	wrapped	   error				  // wrapped error
 }
 
-func NewStructuredError(severity Severity, code, msg string, attributes map[string]interface{}, we error) (*StructuredError, error) {
+func NewStructuredError(severity Severity, code, msg string, attributes map[string]interface{}) (*StructuredError, error) {
 	if severity < Trace || severity > Fatal4 {
 		return nil, errors.New("invalid severity")
 	}
@@ -124,7 +124,6 @@ func NewStructuredError(severity Severity, code, msg string, attributes map[stri
 		Message:    msg,
 		When:       time.Now().Unix(),
 		Attributes: attributes,
-		wrapped:    we,
 	}, nil
 	
 }
@@ -148,22 +147,33 @@ func (se *StructuredError) Error() string {
 	}
 
 	fs := "%s: %s at %s, " + se.Message + "%s"
-	if se.wrapped!= nil {
+	if se.wrapped != nil {
 		fs = fs + "%n  "
 		// TODO: deal with repeat unwrapping and formatting
+		
 	}
 
 	return fmt.Sprintf(fs, se.Severity.String(), se.Code, time.Unix(se.When, 0), v)
 }
 
-
-func (se *StructuredError) Unwrap() error {
-	return se.wrapped
+// IsErrorCode() checks the error code against a provided one
+func (e *StructuredError) IsErrorCode(ec string) bool {
+	return e.Code == strings.ToUpper(ec)
 }
 
-// IsErrorCode() checks the error code against a provided one
-func (e *StructuredError) IsErrorCode(code string) bool {
-	return e.Code == strings.ToUpper(code)
+/*
+func (se *StructuredError) Unwrap() error {
+	if se.wrapped == nil {
+		return nil
+	} else
+	{
+		use, we := fromJson(se.wrapped)
+		if use != nil {
+			return use
+		} else {
+			return we.Unwrap()
+		}
+	}
 }
 
 func (e *StructuredError) ToJson() (string, error) {
@@ -171,8 +181,12 @@ func (e *StructuredError) ToJson() (string, error) {
 	return string(b[:]), err // [:] converts from array to slice without copying!
 }
 
-func FromJson(s string) (*StructuredError, error) {
+func fromJson(e error) (*StructuredError, error) {
 	var se StructuredError
-	err := json.Unmarshal([]byte(s), &se)
-	return &se, err
+	err := json.Unmarshal([]byte(e), &se)
+	if err != nil {
+		return nil, s.wrapped
+	}
+	return &se, nil
 }
+*/
